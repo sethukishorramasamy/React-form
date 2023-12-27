@@ -1,12 +1,13 @@
+/* Styles for the container that holds the upload content */
 .upload-container {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 60vh;
     background-color: #f0f0f0;
-    /* Set your desired background color */
 }
 
+/* Styles for the main content of the upload container */
 .upload-content {
     display: flex;
     flex-direction: column;
@@ -18,12 +19,13 @@
     cursor: pointer;
 }
 
+/* Styles for the upload icon within the content */
 .upload-icon {
     font-size: 40px;
     margin-bottom: 10px;
 }
 
+/* Styles applied when drag-and-drop is active */
 .drag-active {
     background-color: #e0e0e0;
-    /* Set your desired background color for the active state */
 }

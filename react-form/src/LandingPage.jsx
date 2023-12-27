@@ -3,7 +3,6 @@ import React, { useState, useCallback } from 'react';
 import { MDBRow, MDBCol } from 'mdb-react-ui-kit';
 import { useDropzone } from 'react-dropzone';
 import { FaUpload } from 'react-icons/fa';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Tab from 'react-bootstrap/Tab';
@@ -13,13 +12,16 @@ import Form from 'react-bootstrap/Form';
 import styles from './Style.module.css';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import './UploadFiles.css';
 import Table from 'react-bootstrap/Table';
+import './UploadFiles.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const LandingPage = () => {
     const [activeTab, setActiveTab] = useState('Selection');
     const [selectedSelectionOption, setSelectedOption] = useState('Business');
     const [selectedBusinessOption, setBusinessSelectedOption] = useState(null);
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [isFileSelected, setIsFileSelected] = useState(false);
     const [BusinessFormData, setBusinessFormData] = useState({
         business_first_name: '',
         business_last_name: '',
@@ -40,6 +42,7 @@ export const LandingPage = () => {
         business_contact_email_address: '',
         selectedBusinessOption: null,
     });
+
     const [PersonalFormData, setPersonalFormData] = useState({
         personal_first_name: '',
         personal_last_name: '',
@@ -49,77 +52,73 @@ export const LandingPage = () => {
         personal_grade_year: '',
     });
 
-    // select option
+    // set selection as Personal or Business
     const handleSelectionOptionChange = (event) => {
         setSelectedOption(event.target.id);
-        global.Selected_option = event.target.id;
     };
 
+    // set Business form Partnership selection
     const handleBusinessOptionChange = (event) => {
         setBusinessSelectedOption(event.target.id);
     };
 
-
-    // switch tabs based on key
+    // set active tab
     const handleButtonClick = (selectedTab) => {
         setActiveTab(selectedTab);
     };
 
+    // navigate to preview tab from upload files tab
+    const handlePreviewClick = () => {
+        setActiveTab('Preview');
+    };
+
+    // storing business form inputs
     const handleBusinessChange = (e) => {
         const { id, value } = e.target;
         setBusinessFormData((prevData) => ({ ...prevData, [id]: value }));
     };
 
+    // storing personal form inputs
     const handlePersonalChange = (e) => {
         const { id, value } = e.target;
         setPersonalFormData((prevData) => ({ ...prevData, [id]: value }));
     };
 
-    const handleBusinessSubmit = (e) => {
+    // Submit handling Business and Personal
+    const handleBusinessPersonalSubmit = (e) => {
         e.preventDefault();
         handleButtonClick('uploadFiles')
     };
 
-
-    const handlePersonalSubmit = (e) => {
-        e.preventDefault();
-        handleButtonClick('uploadFiles')
-    };
-
-    const [uploadedFiles, setUploadedFiles] = useState([]);
-    const [isFileSelected, setIsFileSelected] = useState(false);
-
+    // file(s) upload
     const onDrop = useCallback((acceptedFiles) => {
-        // Read and convert the image files to data URLs
         const filesWithPreviews = acceptedFiles.map((file) => {
             return Object.assign(file, {
                 preview: URL.createObjectURL(file),
             });
         });
-
-        // Update the state with the information of the uploaded files
         setUploadedFiles(filesWithPreviews);
         setIsFileSelected(true);
-
-        // You can perform additional logic with the acceptedFiles if needed
+        // alert with file name
         if (acceptedFiles.length > 0) {
             alert(`File uploaded: ${acceptedFiles[0].name}`);
             setIsFileSelected(true);
         }
     }, []);
 
+    // Using the useDropzone hook to create a file dropzone in a React component
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        // Callback function invoked when files are dropped onto the dropzone
         onDrop,
+        // Allowing multiple files to be selected or dropped at once
         multiple: true,
     });
-
-    const handlePreviewClick = () => {
-        setActiveTab('Preview');
-    };
 
 
     return (
         <div style={{ background: '#f2f2f2', minHeight: '100vh' }}>
+
+            {/* Top Navbar */}
             <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
                 <Container fluid>
                     <Navbar.Brand href="#">Forms</Navbar.Brand>
@@ -128,9 +127,12 @@ export const LandingPage = () => {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
+            {/* Top Navbar */}
 
-            {/* <Container className="my-4 p-4" style={{ background: 'white', borderRadius: '10px', minHeight: '70vh' }}> */}
+            {/* Container */}
             <Container className="my-4 p-4" style={{ background: 'white', borderRadius: '10px' }}>
+
+                {/* Tabs */}
                 <Tabs
                     defaultActiveKey="Selection"
                     activeKey={activeTab}
@@ -140,7 +142,8 @@ export const LandingPage = () => {
                     fill
                     style={{ marginBottom: '20px' }}
                 >
-                    {/* Selection */}
+
+                    {/* Selection Tab */}
                     <Tab eventKey="Selection" title="Selection" className=" align-items-center justify-content-center">
                         {/* selection options */}
                         <div>
@@ -185,7 +188,7 @@ export const LandingPage = () => {
                                 <div className='mt-4 text-center'>
                                     <Button
                                         variant="outline-primary"
-                                        onClick={() => handleButtonClick(global.Selected_option === 'Personal' ? 'PersonalForm' : 'BusinessForm')}
+                                        onClick={() => handleButtonClick(selectedSelectionOption === 'Personal' ? 'PersonalForm' : 'BusinessForm')}
                                         style={{ fontSize: "18px" }}
                                     >
                                         Click to Fill Form
@@ -193,14 +196,15 @@ export const LandingPage = () => {
                                 </div>
                             </Container>
                         </div>
-                        {/* selection options */}  </Tab>
-                    {/* Selection */}
+                        {/* selection options */}
+                    </Tab>
+                    {/* Selection Tab */}
 
-                    {/* Business form */}
+                    {/* Business Form Tab */}
                     <Tab eventKey="BusinessForm" title="Business Form" disabled>
                         <div style={{ height: "10px" }}></div>
                         <div className='px-16' style={{ margin: '10px' }}>
-                            <Form onSubmit={handleBusinessSubmit}>
+                            <Form onSubmit={handleBusinessPersonalSubmit}>
                                 <Row>
                                     <Col md={5}>
                                         <Row>
@@ -340,11 +344,6 @@ export const LandingPage = () => {
                                                     style={{ margin: "0px 20px 0px 0px" }}
                                                 />
                                             </div>
-                                            {/* {selectedBusinessOption && (
-                                                <div className='mt-3'>
-                                                    <p>You selected : {selectedBusinessOption}</p>
-                                                </div>
-                                            )} */}
                                         </div>
                                     </Col>
                                     <Col md={1}>
@@ -388,22 +387,20 @@ export const LandingPage = () => {
                                         </Col>
                                     </Col>
                                 </Row>
-                                {/* onClick={() => handleButtonClick('uploadFiles')} */}
                                 <Button className='mx-2 mb-4' variant="outline-primary" type="submit">
                                     Proceed to Upload Files
                                 </Button>
                             </Form>
                         </div>
-
                         <div style={{ height: "20px" }}></div>
                     </Tab>
-                    {/* Business form */}
+                    {/* Business Form Tab */}
 
-                    {/* Personal form */}
+                    {/* Personal Form Tab */}
                     <Tab eventKey="PersonalForm" title="Personal Form" disabled>
                         <div style={{ height: "10px" }}></div>
                         <div className='px-16' style={{ margin: '10px' }}>
-                            <Form onSubmit={handlePersonalSubmit}>
+                            <Form onSubmit={handleBusinessPersonalSubmit}>
                                 <Row>
                                     <Col md={5}>
                                         <Form.Group className="mb-3" controlId="personal_first_name">
@@ -455,7 +452,6 @@ export const LandingPage = () => {
                                         </Form.Group>
                                     </Col>
                                 </Row>
-                                {/* onClick={() => handleButtonClick('uploadFiles')} */}
                                 <Button className='mt-4 mx-2' variant="outline-primary" type="submit">
                                     Proceed to Upload Files
                                 </Button>
@@ -463,9 +459,9 @@ export const LandingPage = () => {
                         </div>
                         <div style={{ height: "40px" }}></div>
                     </Tab>
-                    {/* Personal form */}
+                    {/* Personal Form Tab */}
 
-                    {/* upload files */}
+                    {/* Upload Files Tab */}
                     <Tab eventKey="uploadFiles" title="Upload Files">
                         <div className="upload-container d-flex" {...getRootProps()}>
                             <input {...getInputProps()} />
@@ -488,9 +484,9 @@ export const LandingPage = () => {
 
                         )}
                     </Tab>
-                    {/* upload files */}
+                    {/* Upload Files Tab */}
 
-                    {/* preview */}
+                    {/* Preview Tab */}
                     <Tab eventKey="Preview" title="Preview">
                         {selectedSelectionOption === 'Business' && (
                             <div className='mt-4'>
@@ -642,10 +638,15 @@ export const LandingPage = () => {
                             height: "100px"
                         }}></div>
                     </Tab>
-                    {/* preview */}
-                </Tabs>
-            </Container>
+                    {/* Preview Tab */}
 
+                </Tabs>
+                {/* Tabs */}
+
+            </Container>
+            {/* Container */}
+
+            {/* Bottom Navbar */}
             <Navbar fixed="bottom" expand="lg" bg="light" variant="dark">
                 <Container className="text-center">
                     <div style={{ width: '100%' }}>
@@ -653,6 +654,8 @@ export const LandingPage = () => {
                     </div>
                 </Container>
             </Navbar>
+            {/* Bottom Navbar */}
+
         </div >
     );
 };
