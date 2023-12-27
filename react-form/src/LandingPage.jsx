@@ -184,7 +184,9 @@ export const LandingPage = () => {
                                         </div>
                                     </Form>
                                 </div>
-                                <p style={{ fontSize: "23px", color: "gray" }} className='mt-1'>Explore our collection of books and manage your library activities with ease</p>
+                                <p style={{ fontSize: "23px", color: "gray" }} className='mt-1'>
+                                      Streamlined form submission with React for Business and Personal details
+                                </p>
                                 <div className='mt-4 text-center'>
                                     <Button
                                         variant="outline-primary"
